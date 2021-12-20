@@ -30,3 +30,71 @@ export class Match {
     }
 
 }
+
+/**
+ * ADT representing a bracket prediction
+ */
+export class BracketPrediction {
+
+    private scoresOnRounds:Array<number|null> = [];
+
+    /**
+     * Constructs a score-able bracket prediction.
+     * 
+     * @param bracketHead match corresponding to the finals of the bracket
+     */
+    public constructor(
+        public readonly bracketHead:Match
+    ) {
+    }
+
+    /**
+     * Scores the bracket prediction.
+     * 
+     * @param results results bracket to score against
+     * @param scoringFormula scoring formula to assign scores
+     * @throws error if this and results have different shapes
+     */
+    public score(results:BracketResult, scoringFormula:(prediction:Match, actual:Match) => number):void {
+        throw Error('implement me!');
+    }
+
+    /**
+     * Computes the score of a fixed round.
+     * 
+     * @param depth depth of the round to compute the score of
+     * @returns score on round, or null if the results do not exist for the round yet
+     * @throws error if bracket has not been scored yet
+     */
+    public getScoreOnRound(depth:number):number|null {
+        throw Error('implement me!');
+    }
+
+    /**
+     * Computes the score through a fixed round.
+     * 
+     * @param depth depth of the round to compute the score through
+     * @returns score through round, or null if results do not exist for the round yet
+     * @throws error if bracket has not been scored yet
+     */
+    public getScoreThroughRound(depth:number):number|null {
+        throw Error('implement me!');
+    }
+}
+
+/**
+ * ADT representing a (possibly incomplete) bracket result
+ */
+export class BracketResult {
+
+    /**
+     * Constructs a (possibly incomplete) bracket result.
+     * 
+     * @param bracketHead match corresponding to the finals of the bracket
+     */
+    public constructor(
+        public readonly bracketHead:Match
+    ) {
+    }
+
+}
