@@ -1,31 +1,32 @@
 import assert from 'assert';
 
 /**
- * ADT representing a score-able match prediction
+ * ADT representing a score-able match
  */
-export class MatchPrediction {
+export class Match {
 
     public score:number|null = null;
-    public readonly predictedWinner:string;
     public readonly leftParticipant:string;
     public readonly rightParticipant:string;
 
     /**
-     * Constructs a score-able match prediction.
+     * Constructs a score-able match.
      * 
      * @param left the left entry of the match, which itself is a match prediction or a participant
      * @param right the right entry of the match
-     * @param predictedResult the predicted result of the match
+     * @param winner the winner of the match; must be the left participant, right participant, or '?'
+     * @param leftScore the score of the left participant
+     * @param rightScore the score of the right participant
      */
     public constructor(
-        public readonly left:MatchPrediction|string,
-        public readonly right:MatchPrediction|string,
-        public readonly predictedLeftScore:number,
-        public readonly predictedRightScore:number
+        public readonly left:Match|string,
+        public readonly right:Match|string,
+        public readonly winner:string,
+        public readonly leftScore:number,
+        public readonly rightScore:number
     ) {
-        this.leftParticipant = (left instanceof MatchPrediction) ? left.predictedWinner : left;
-        this.rightParticipant = (right instanceof MatchPrediction) ? right.predictedWinner : right;
-        this.predictedWinner = (predictedLeftScore >= predictedRightScore) ? this.leftParticipant : this.rightParticipant;
+        this.leftParticipant = (left instanceof Match) ? left.winner : left;
+        this.rightParticipant = (right instanceof Match) ? right.winner : right;
     }
 
 }
