@@ -7,8 +7,8 @@ export class MatchPrediction {
 
     public score:number|null = null;
     public readonly predictedWinner:string;
-    private leftParticipant:string;
-    private rightParticipant:string;
+    public readonly leftParticipant:string;
+    public readonly rightParticipant:string;
 
     /**
      * Constructs a score-able match prediction.
@@ -20,20 +20,12 @@ export class MatchPrediction {
     public constructor(
         public readonly left:MatchPrediction|string,
         public readonly right:MatchPrediction|string,
-        public readonly predictedResult:{ leftScore:number, rightScore:number }
+        public readonly predictedLeftScore:number,
+        public readonly predictedRightScore:number
     ) {
         this.leftParticipant = (left instanceof MatchPrediction) ? left.predictedWinner : left;
         this.rightParticipant = (right instanceof MatchPrediction) ? right.predictedWinner : right;
-        this.predictedWinner = (this.predictedResult.leftScore >= this.predictedResult.rightScore) ? this.leftParticipant : this.rightParticipant;
-    }
-
-    /**
-     * Assigns a prediction score to the match.
-     * 
-     * @param score numerical score to assign to the match
-     */
-    public assignScore(score:number):void {
-        this.score = score;
+        this.predictedWinner = (predictedLeftScore >= predictedRightScore) ? this.leftParticipant : this.rightParticipant;
     }
 
 }
