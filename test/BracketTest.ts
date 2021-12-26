@@ -59,8 +59,8 @@ describe('BracketPrediction', function() {
         const testBracketResult = makeTestBracketResultIncomplete();
         const depth = 0;
         testBracketPrediction.score(testBracketResult, (prediction, actual, depth) => (prediction.leftScore + actual.rightScore + depth));
-        assert(testBracketPrediction.getScoreOnRound(depth) === null);
-        assert(testBracketPrediction.getScoreThroughRound(depth) === null);
+        assert.deepStrictEqual(testBracketPrediction.getScoreOnRound(depth), null, 'expected null score');
+        assert.deepStrictEqual(testBracketPrediction.getScoreThroughRound(depth), null, 'expected null cumulative score');
     });
 
     // covers getScoreOnRound with this has not been scored already
@@ -68,8 +68,8 @@ describe('BracketPrediction', function() {
     it('attempt to get score with prediction not scored', function () {
         const testBracketPrediction = makeTestBracketPrediction();
         const depth = 1;
-        assert(testBracketPrediction.getScoreOnRound(depth) === null);
-        assert(testBracketPrediction.getScoreThroughRound(depth) === null);
+        assert.deepStrictEqual(testBracketPrediction.getScoreOnRound(depth), null, 'expected null score');
+        assert.deepStrictEqual(testBracketPrediction.getScoreThroughRound(depth), null, 'expected null cumulative score');
     });
 
     // covers getScoreOnRound with depth >0, scores exist for round, this has been scored already
@@ -79,8 +79,8 @@ describe('BracketPrediction', function() {
         const testBracketResult = makeTestBracketResultIncomplete();
         const depth = 1;
         testBracketPrediction.score(testBracketResult, (prediction, actual, depth) => (prediction.leftScore + actual.rightScore + depth));
-        assert(testBracketPrediction.getScoreOnRound(depth) === 5 + 7);
-        assert(testBracketPrediction.getScoreThroughRound(depth) === 5 + 7);
+        assert.deepStrictEqual(testBracketPrediction.getScoreOnRound(depth), 5 + 7, 'expected correct score');
+        assert.deepStrictEqual(testBracketPrediction.getScoreThroughRound(depth), 5 + 7, 'expected correct cumulative score');
     });
 
     // covers getScoreThroughRound with 0 < depth < max depth
@@ -103,7 +103,7 @@ describe('BracketPrediction', function() {
         const testBracketResult = new BracketResult(finalsResult);
         const depth = 1;
         testBracketPrediction.score(testBracketResult, (prediction, actual, depth) => (prediction.leftScore + actual.rightScore + depth));
-        assert(testBracketPrediction.getScoreOnRound(depth) === 6 + 7);
-        assert(testBracketPrediction.getScoreThroughRound(depth) === 6 + 8 + 2 + 7 + 6 + 7);
+        assert.deepStrictEqual(testBracketPrediction.getScoreOnRound(depth), 6 + 7, 'expected correct score');
+        assert.deepStrictEqual(testBracketPrediction.getScoreThroughRound(depth), 6 + 8 + 2 + 7 + 6 + 7, 'expected correct cumulative score');
     });
 });
