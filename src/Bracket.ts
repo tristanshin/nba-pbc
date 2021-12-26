@@ -55,7 +55,7 @@ export class BracketPrediction {
      * @param scoringFormula scoring formula to assign scores
      * @throws error if this and results have different shapes
      */
-    public score(results:BracketResult, scoringFormula:(prediction:Match, actual:Match) => number):void {
+    public score(results:BracketResult, scoringFormula:(prediction:Match, actual:Match, depth:number) => number):void {
         throw Error('implement me!');
     }
 
@@ -64,7 +64,6 @@ export class BracketPrediction {
      * 
      * @param depth depth of the round to compute the score of
      * @returns score on round, or null if the results do not exist for the round yet
-     * @throws error if bracket has not been scored yet
      */
     public getScoreOnRound(depth:number):number|null {
         throw Error('implement me!');
@@ -75,7 +74,6 @@ export class BracketPrediction {
      * 
      * @param depth depth of the round to compute the score through
      * @returns score through round, or null if results do not exist for the round yet
-     * @throws error if bracket has not been scored yet
      */
     public getScoreThroughRound(depth:number):number|null {
         throw Error('implement me!');
