@@ -27,6 +27,7 @@ export class Match {
     ) {
         this.leftParticipant = (left instanceof Match) ? left.winner : left;
         this.rightParticipant = (right instanceof Match) ? right.winner : right;
+        assert([this.leftParticipant, this.rightParticipant, '?'].includes(winner), 'winner must be a participant or unknown');
     }
 
 }
@@ -49,14 +50,53 @@ export class BracketPrediction {
     }
 
     /**
-     * Scores the bracket prediction.
+     * Scores the bracket prediction, removing any previous scoring.
+     * 
+     * WARNING: terribly mutates this object if results has different shape
      * 
      * @param results results bracket to score against
      * @param scoringFormula scoring formula to assign scores
      * @throws error if this and results have different shapes
      */
     public score(results:BracketResult, scoringFormula:(prediction:Match, actual:Match, depth:number) => number):void {
-        throw Error('implement me!');
+        this.scoresOnRounds.length = 0; // clear any stored scoring
+        // simultaneously traverse prediction and results brackets via bfs
+        let predictionRound = [this.bracketHead];
+        let resultsRound = [results.bracketHead];
+        let depth = 0;
+        while (predictionRound.length > 0) {
+            const nextPredictionRound:Array<Match> = [];
+            const nextResultsRound:Array<Match> = [];
+            let scoreOnRound = 0;
+            let roundHasScore = false;
+            for (let i = 0; i < predictionRound.length; i++) {
+                const predictionMatch = predictionRound[i]; assert(predictionMatch !== undefined);
+                const resultsMatch = resultsRound[i]; assert(resultsMatch !== undefined);
+                if (resultsMatch.winner === '?') {
+                    predictionMatch.score = null;
+                } else {
+                    predictionMatch.score = scoringFormula(predictionMatch, resultsMatch, depth);
+                    scoreOnRound += predictionMatch.score;
+                    roundHasScore = true;
+                }
+                if (predictionMatch.left instanceof Match) {
+                    nextPredictionRound.push(predictionMatch.left);
+                }
+                if (predictionMatch.right instanceof Match) {
+                    nextPredictionRound.push(predictionMatch.right);
+                }
+                if (resultsMatch.left instanceof Match) {
+                    nextResultsRound.push(resultsMatch.left);
+                }
+                if (resultsMatch.right instanceof Match) {
+                    nextResultsRound.push(resultsMatch.right);
+                }
+            }
+            predictionRound = nextPredictionRound;
+            resultsRound = nextResultsRound;
+            this.scoresOnRounds.push(roundHasScore ? scoreOnRound : null);
+            depth++;
+        }
     }
 
     /**
@@ -66,17 +106,30 @@ export class BracketPrediction {
      * @returns score on round, or null if the results do not exist for the round yet
      */
     public getScoreOnRound(depth:number):number|null {
-        throw Error('implement me!');
+        const score = this.scoresOnRounds[depth];
+        return (score === undefined) ? null : score;
     }
 
     /**
      * Computes the score through a fixed round.
      * 
      * @param depth depth of the round to compute the score through
-     * @returns score through round, or null if results do not exist for the round yet
+     * @returns score through round, or null if results do not exist for some round
+     *          through the requested round yet
      */
     public getScoreThroughRound(depth:number):number|null {
-        throw Error('implement me!');
+        if (this.scoresOnRounds.length === 0) {
+            return null;
+        }
+        let score = 0;
+        for (let i = depth; i < this.scoresOnRounds.length; i++) {
+            const scoreOnRound = this.scoresOnRounds[i];
+            if ((scoreOnRound === undefined) || (scoreOnRound === null)) {
+                return null;
+            }
+            score += scoreOnRound;
+        }
+        return score;
     }
 }
 
