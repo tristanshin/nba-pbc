@@ -131,6 +131,7 @@ export class BracketPrediction {
         }
         return score;
     }
+    
 }
 
 /**

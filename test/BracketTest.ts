@@ -8,18 +8,15 @@ function makeTestBracketPrediction():BracketPrediction {
     return new BracketPrediction(finals);
 }
 
-function makeTestBracketResultComplete():BracketResult {
-    const leftSemi = new Match('A', 'B', 'A', 4, 0);
-    const rightSemi = new Match('C', 'D', 'C', 4, 2);
-    const finals = new Match(leftSemi, rightSemi, 'C', 2, 4);
-    return new BracketResult(finals);
-}
-
 function makeTestBracketResultIncomplete():BracketResult {
     const leftSemi = new Match('A', 'B', 'A', 4, 0);
     const rightSemi = new Match('C', 'D', 'C', 4, 2);
     const finals = new Match(leftSemi, rightSemi, '?', 0, 0);
     return new BracketResult(finals);
+}
+
+function testScoringFunction(prediction:Match, actual:Match, depth:number):number {
+    return prediction.leftScore + actual.rightScore + depth;
 }
 
 describe('BracketPrediction', function() {
@@ -58,7 +55,7 @@ describe('BracketPrediction', function() {
         const testBracketPrediction = makeTestBracketPrediction();
         const testBracketResult = makeTestBracketResultIncomplete();
         const depth = 0;
-        testBracketPrediction.score(testBracketResult, (prediction, actual, depth) => (prediction.leftScore + actual.rightScore + depth));
+        testBracketPrediction.score(testBracketResult, testScoringFunction);
         assert.deepStrictEqual(testBracketPrediction.getScoreOnRound(depth), null, 'expected null score');
         assert.deepStrictEqual(testBracketPrediction.getScoreThroughRound(depth), null, 'expected null cumulative score');
     });
@@ -78,7 +75,7 @@ describe('BracketPrediction', function() {
         const testBracketPrediction = makeTestBracketPrediction();
         const testBracketResult = makeTestBracketResultIncomplete();
         const depth = 1;
-        testBracketPrediction.score(testBracketResult, (prediction, actual, depth) => (prediction.leftScore + actual.rightScore + depth));
+        testBracketPrediction.score(testBracketResult, testScoringFunction);
         assert.deepStrictEqual(testBracketPrediction.getScoreOnRound(depth), 5 + 7, 'expected correct score');
         assert.deepStrictEqual(testBracketPrediction.getScoreThroughRound(depth), 5 + 7, 'expected correct cumulative score');
     });
@@ -102,8 +99,9 @@ describe('BracketPrediction', function() {
         const finalsResult = new Match(semi1Result, semi2Result, 'C', 4, 1);
         const testBracketResult = new BracketResult(finalsResult);
         const depth = 1;
-        testBracketPrediction.score(testBracketResult, (prediction, actual, depth) => (prediction.leftScore + actual.rightScore + depth));
+        testBracketPrediction.score(testBracketResult, testScoringFunction);
         assert.deepStrictEqual(testBracketPrediction.getScoreOnRound(depth), 6 + 7, 'expected correct score');
         assert.deepStrictEqual(testBracketPrediction.getScoreThroughRound(depth), 6 + 8 + 2 + 7 + 6 + 7, 'expected correct cumulative score');
     });
+
 });
